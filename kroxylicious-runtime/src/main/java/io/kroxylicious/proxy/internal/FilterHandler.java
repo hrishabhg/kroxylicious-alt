@@ -252,9 +252,14 @@ public class FilterHandler extends ChannelDuplexHandler {
                                                                                  InternalFilterContext filterContext) {
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("{}: Dispatching upstream {} response to filter '{}': {}",
-                    channelDescriptor(), decodedFrame.apiKey(), filterDescriptor(), decodedFrame);
+            LOGGER.debug("{}: Dispatching upstream {} response to filter '{}'",
+                    channelDescriptor(), decodedFrame.apiKey(), filterDescriptor());
         }
+        if (virtualClusterModel.isLogFrames()) {
+            LOGGER.info("{}: Upstream response to filter '{}' : {}",
+                    channelDescriptor(), filterDescriptor(), decodedFrame);
+        }
+
         var stage = filterAndInvoker.invoker().onResponse(decodedFrame.apiKey(), decodedFrame.apiVersion(),
                 decodedFrame.header(), decodedFrame.body(), filterContext);
         return stage.toCompletableFuture();
