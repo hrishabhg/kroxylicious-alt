@@ -318,7 +318,7 @@ public class KafkaProxyFrontendHandler
         }
         filterAndInvokers.addAll(FilterAndInvoker.build("VirtualCluster TopicNameCache (internal)", virtualClusterModel.getTopicNameCacheFilter()));
         // List<FilterAndInvoker> brokerAddressFilters = FilterAndInvoker.build("BrokerAddress (internal)",
-        //        new BrokerAddressFilter(endpointBinding.endpointGateway(), endpointReconciler));
+        // new BrokerAddressFilter(endpointBinding.endpointGateway(), endpointReconciler));
         // filterAndInvokers.addAll(brokerAddressFilters);
 
         return filterAndInvokers;

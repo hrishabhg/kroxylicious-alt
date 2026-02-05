@@ -51,7 +51,7 @@ public class ApiVersionResponseAggregator implements ApiMessageAggregator<ApiVer
 
     @Override
     public CompletionStage<AggregateResponse<ApiVersionsResponseData>> aggregate(
-            ResponseAggregationContext<ApiVersionsResponseData> context) {
+                                                                                 ResponseAggregationContext<ApiVersionsResponseData> context) {
 
         Objects.requireNonNull(context, "aggregation context cannot be null");
 

@@ -93,12 +93,11 @@ public class BrokerTopologyAggregator implements ApiMessageAggregator<MetadataRe
                 // Get the advertised address from the node identification strategy
                 HostPort advertisedAddress = endpointGateway.getAdvertisedBrokerAddress(virtualNodeId);
 
-                MetadataResponseData.MetadataResponseBroker newBroker =
-                        new MetadataResponseData.MetadataResponseBroker()
-                                .setNodeId(virtualNodeId)
-                                .setHost(advertisedAddress.host())
-                                .setPort(advertisedAddress.port())
-                                .setRack(originalBroker.rack());
+                MetadataResponseData.MetadataResponseBroker newBroker = new MetadataResponseData.MetadataResponseBroker()
+                        .setNodeId(virtualNodeId)
+                        .setHost(advertisedAddress.host())
+                        .setPort(advertisedAddress.port())
+                        .setRack(originalBroker.rack());
 
                 boolean added = aggBrokers.add(newBroker);
                 if (!added) {
@@ -127,31 +126,29 @@ public class BrokerTopologyAggregator implements ApiMessageAggregator<MetadataRe
                 }
                 seenTopics.add(originalTopic.name());
 
-                MetadataResponseData.MetadataResponseTopic newTopic =
-                        new MetadataResponseData.MetadataResponseTopic()
-                                .setName(originalTopic.name())
-                                .setTopicId(originalTopic.topicId())
-                                .setIsInternal(originalTopic.isInternal())
-                                .setErrorCode(originalTopic.errorCode())
-                                .setTopicAuthorizedOperations(originalTopic.topicAuthorizedOperations());
+                MetadataResponseData.MetadataResponseTopic newTopic = new MetadataResponseData.MetadataResponseTopic()
+                        .setName(originalTopic.name())
+                        .setTopicId(originalTopic.topicId())
+                        .setIsInternal(originalTopic.isInternal())
+                        .setErrorCode(originalTopic.errorCode())
+                        .setTopicAuthorizedOperations(originalTopic.topicAuthorizedOperations());
 
                 var newPartitions = new ArrayList<MetadataResponseData.MetadataResponsePartition>();
                 for (MetadataResponseData.MetadataResponsePartition originalPartition : originalTopic.partitions()) {
-                    MetadataResponseData.MetadataResponsePartition newPartition =
-                            new MetadataResponseData.MetadataResponsePartition()
-                                    .setPartitionIndex(originalPartition.partitionIndex())
-                                    .setErrorCode(originalPartition.errorCode())
-                                    .setLeaderId(transformNodeId(originalPartition.leaderId(), nodeIdOffset))
-                                    .setLeaderEpoch(originalPartition.leaderEpoch())
-                                    .setReplicaNodes(originalPartition.replicaNodes().stream()
-                                            .map(nodeId -> transformNodeId(nodeId, nodeIdOffset))
-                                            .toList())
-                                    .setIsrNodes(originalPartition.isrNodes().stream()
-                                            .map(nodeId -> transformNodeId(nodeId, nodeIdOffset))
-                                            .toList())
-                                    .setOfflineReplicas(originalPartition.offlineReplicas().stream()
-                                            .map(nodeId -> transformNodeId(nodeId, nodeIdOffset))
-                                            .toList());
+                    MetadataResponseData.MetadataResponsePartition newPartition = new MetadataResponseData.MetadataResponsePartition()
+                            .setPartitionIndex(originalPartition.partitionIndex())
+                            .setErrorCode(originalPartition.errorCode())
+                            .setLeaderId(transformNodeId(originalPartition.leaderId(), nodeIdOffset))
+                            .setLeaderEpoch(originalPartition.leaderEpoch())
+                            .setReplicaNodes(originalPartition.replicaNodes().stream()
+                                    .map(nodeId -> transformNodeId(nodeId, nodeIdOffset))
+                                    .toList())
+                            .setIsrNodes(originalPartition.isrNodes().stream()
+                                    .map(nodeId -> transformNodeId(nodeId, nodeIdOffset))
+                                    .toList())
+                            .setOfflineReplicas(originalPartition.offlineReplicas().stream()
+                                    .map(nodeId -> transformNodeId(nodeId, nodeIdOffset))
+                                    .toList());
 
                     newPartitions.add(newPartition);
                 }

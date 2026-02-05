@@ -581,8 +581,7 @@ public class ProxyChannelStateMachine {
                 binding.virtualNodeId() == null ? binding.endpointGateway().getBindAddress() : binding.endpointGateway().getBrokerAddress(binding.virtualNodeId()),
                 sessionId,
                 ApiKeys.forId(frame.apiKeyId()).name(),
-                msgBackends.stream().map(b -> b.endpoint().getHostPort()).collect(Collectors.toList())
-        );
+                msgBackends.stream().map(b -> b.endpoint().getHostPort()).collect(Collectors.toList()));
 
         int sentCount = 0;
         try {

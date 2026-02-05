@@ -42,7 +42,7 @@ public record UpstreamEndpoint(String host, int port, TargetCluster targetCluste
                 && this.port == that.port
                 && this.targetCluster.equals(that.targetCluster)
                 && ((this.upstreamNodeId == null && that.upstreamNodeId == null)
-                    || (this.upstreamNodeId != null && this.upstreamNodeId.equals(that.upstreamNodeId)));
+                        || (this.upstreamNodeId != null && this.upstreamNodeId.equals(that.upstreamNodeId)));
     }
 
     @Override
