@@ -40,8 +40,6 @@ public class TopicRouter implements Router {
     private final Map<ApiKeys, ApiMessageAggregator<?>> aggregators;
     private final VirtualClusterModel virtualCluster;
 
-    private UpstreamEndpoint coordinatorEndpoint;
-
     private final ApiMessageAggregator<? extends ApiMessage> defaultAggregator = new DefaultApiMessageAggregator();
 
     public TopicRouter(VirtualClusterModel virtualCluster,
@@ -63,7 +61,9 @@ public class TopicRouter implements Router {
     // this call should go to any broker of first target cluster
     private static final Set<ApiKeys> COORDINATOR_APIS = Set.of(
             ApiKeys.FIND_COORDINATOR,
-            ApiKeys.INIT_PRODUCER_ID);
+            ApiKeys.INIT_PRODUCER_ID,
+            ApiKeys.GET_TELEMETRY_SUBSCRIPTIONS,
+            ApiKeys.PUSH_TELEMETRY);
 
     private static final Set<ApiKeys> TXN_APIS = Set.of(
             ApiKeys.TXN_OFFSET_COMMIT,
@@ -73,17 +73,6 @@ public class TopicRouter implements Router {
 
     public TargetCluster coordinatorTargetCluster() {
         return virtualCluster.targetClusters().get(0);
-    }
-
-    public UpstreamEndpoint coordinatorEndpoint() {
-        if (coordinatorEndpoint == null) {
-            coordinatorEndpoint = new UpstreamEndpoint(
-                    coordinatorTargetCluster().bootstrapServer().host(),
-                    coordinatorTargetCluster().bootstrapServer().port(),
-                    coordinatorTargetCluster(),
-                    null);
-        }
-        return coordinatorEndpoint;
     }
 
     // todo: should I cache the EndpointBinding instances?
@@ -103,7 +92,7 @@ public class TopicRouter implements Router {
                     throw new IllegalArgumentException("API key " + apiKey + " not supported for bootstrap endpoint binding");
                 }
                 if (COORDINATOR_APIS.contains(apiKey)) {
-                    return List.of(coordinatorEndpoint());
+                    return allUpstreamServiceEndpoints().stream().filter(e -> e.targetCluster().equals(coordinatorTargetCluster())).toList();
                 }
                 return allUpstreamServiceEndpoints();
             }
@@ -172,11 +161,9 @@ public class TopicRouter implements Router {
                     return allUpstreamServiceEndpoints();
                 }
 
+                // todo: coordinatorEndpoint might require fixing.
                 if (COORDINATOR_APIS.contains(apiKey)) {
-                    if (coordinatorEndpoint == null) {
-                        throw new IllegalStateException("Coordinator endpoint not initialised for nodeId " + virtualNodeId);
-                    }
-                    return List.of(coordinatorEndpoint);
+                    return allUpstreamServiceEndpoints().stream().filter(e -> e.targetCluster().equals(coordinatorTargetCluster())).toList();
                 }
 
                 if (topicAwareEndpoint == null) {

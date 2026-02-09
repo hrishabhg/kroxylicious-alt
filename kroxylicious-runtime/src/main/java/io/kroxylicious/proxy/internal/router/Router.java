@@ -38,9 +38,6 @@ public interface Router {
      * Get broker endpoint binding for given nodeId and target cluster.
      * @param endpointGateway gateway
      * @param virtualNodeId nodeId
-     * @param upstreamNodeId upstreamNodeId in target cluster
-     * @param hostPort hostPort of the broker
-     * @param targetCluster associated target cluster
      * @return broker endpoint binding
      */
     BrokerEndpointBinding brokerEndpointBinding(EndpointGateway endpointGateway, int virtualNodeId, UpstreamEndpoint upstreamEndpoint);

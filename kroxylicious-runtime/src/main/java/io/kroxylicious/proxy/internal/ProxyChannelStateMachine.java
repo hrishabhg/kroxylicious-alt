@@ -722,6 +722,10 @@ public class ProxyChannelStateMachine {
         // Forward response to session state machine which routes to frontend
         // aggregate responses based on correlation counter
         // todo: to ensure decoded response, the correlation manager should say decodeResponse=true for aggregated requests
+        if (msg instanceof Frame f && f.apiKeyId() == 71) {
+            LOGGER.debug("{}: Received API Versions response from cluster {}. Forwarding to session.",
+                    sessionId, backend.clusterId());
+        }
         if (msg instanceof DecodedResponseFrame<?> frame) {
             ResponseAggregationContext aggContext = aggregationCorrelationManager.get(frame.correlationId());
             aggContext.addMessage(backend.targetCluster(), frame);
