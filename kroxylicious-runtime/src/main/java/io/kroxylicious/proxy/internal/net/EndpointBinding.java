@@ -25,14 +25,14 @@ public interface EndpointBinding {
      */
     EndpointGateway endpointGateway();
 
-    List<UpstreamEndpoint> upstreamServiceEndpoints(ApiKeys apiKey); // target specific to the filter context
+    List<UpstreamEndpoint> upstreamEndpoints(ApiKeys apiKey); // target specific to the filter context
 
     /**
      * All upstream service endpoints for this binding. Connection manager will initialise connections to all of these.
      *
      * @return all upstream service endpoints.
      */
-    List<UpstreamEndpoint> allUpstreamServiceEndpoints(); // all targets
+    List<UpstreamEndpoint> allUpstreamEndpoints(); // all targets
 
     /**
      * If set true, the upstream target must only be used for metadata discovery.

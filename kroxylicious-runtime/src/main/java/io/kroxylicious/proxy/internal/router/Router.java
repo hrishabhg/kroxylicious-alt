@@ -60,14 +60,14 @@ public interface Router {
 
             @NonNull
             @Override
-            public List<UpstreamEndpoint> upstreamServiceEndpoints(ApiKeys apiKey) {
-                return bootstrapEndpointBinding.upstreamServiceEndpoints(apiKey);
+            public List<UpstreamEndpoint> upstreamEndpoints(ApiKeys apiKey) {
+                return bootstrapEndpointBinding.upstreamEndpoints(apiKey);
             }
 
             @NonNull
             @Override
-            public List<UpstreamEndpoint> allUpstreamServiceEndpoints() {
-                return bootstrapEndpointBinding.allUpstreamServiceEndpoints();
+            public List<UpstreamEndpoint> allUpstreamEndpoints() {
+                return bootstrapEndpointBinding.allUpstreamEndpoints();
             }
 
             @NonNull

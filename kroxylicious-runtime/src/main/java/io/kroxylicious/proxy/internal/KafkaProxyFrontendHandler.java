@@ -299,8 +299,8 @@ public class KafkaProxyFrontendHandler
      * Called by the {@link ProxyChannelStateMachine} on entry to the {@link SelectingServer} state.
      */
     void inSelectingServer() {
-        var upstreamServiceEndpoints = Objects.requireNonNull(endpointBinding.allUpstreamServiceEndpoints());
-        initiateConnect(upstreamServiceEndpoints);
+        var upstreamEndpoints = Objects.requireNonNull(endpointBinding.allUpstreamEndpoints());
+        initiateConnect(upstreamEndpoints);
     }
 
     @NonNull

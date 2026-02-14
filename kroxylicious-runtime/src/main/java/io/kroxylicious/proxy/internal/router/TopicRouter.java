@@ -87,19 +87,19 @@ public class TopicRouter implements Router {
 
             @NonNull
             @Override
-            public List<UpstreamEndpoint> upstreamServiceEndpoints(@NonNull ApiKeys apiKey) {
+            public List<UpstreamEndpoint> upstreamEndpoints(@NonNull ApiKeys apiKey) {
                 if (TOPIC_AWARE_APIS.contains(apiKey) || TXN_APIS.contains(apiKey)) {
                     throw new IllegalArgumentException("API key " + apiKey + " not supported for bootstrap endpoint binding");
                 }
                 if (COORDINATOR_APIS.contains(apiKey)) {
-                    return allUpstreamServiceEndpoints().stream().filter(e -> e.targetCluster().equals(coordinatorTargetCluster())).toList();
+                    return allUpstreamEndpoints().stream().filter(e -> e.targetCluster().equals(coordinatorTargetCluster())).toList();
                 }
-                return allUpstreamServiceEndpoints();
+                return allUpstreamEndpoints();
             }
 
             @NonNull
             @Override
-            public List<UpstreamEndpoint> allUpstreamServiceEndpoints() {
+            public List<UpstreamEndpoint> allUpstreamEndpoints() {
                 return virtualCluster.targetClusters().stream()
                         .map(t -> new UpstreamEndpoint(t.bootstrapServer().host(), t.bootstrapServer().port(), t, null))
                         .toList();
@@ -152,18 +152,18 @@ public class TopicRouter implements Router {
 
             @NonNull
             @Override
-            public List<UpstreamEndpoint> upstreamServiceEndpoints(@NonNull ApiKeys apiKey) {
+            public List<UpstreamEndpoint> upstreamEndpoints(@NonNull ApiKeys apiKey) {
                 if (TXN_APIS.contains(apiKey)) {
                     throw new IllegalArgumentException("API key " + apiKey + " not supported for broker endpoint binding");
                 }
                 ensureInitialized();
                 if (apiKey == ApiKeys.METADATA) {
-                    return allUpstreamServiceEndpoints();
+                    return allUpstreamEndpoints();
                 }
 
                 // todo: coordinatorEndpoint might require fixing.
                 if (COORDINATOR_APIS.contains(apiKey)) {
-                    return allUpstreamServiceEndpoints().stream().filter(e -> e.targetCluster().equals(coordinatorTargetCluster())).toList();
+                    return allUpstreamEndpoints().stream().filter(e -> e.targetCluster().equals(coordinatorTargetCluster())).toList();
                 }
 
                 if (topicAwareEndpoint == null) {
@@ -175,7 +175,7 @@ public class TopicRouter implements Router {
 
             @NonNull
             @Override
-            public List<UpstreamEndpoint> allUpstreamServiceEndpoints() {
+            public List<UpstreamEndpoint> allUpstreamEndpoints() {
                 ensureInitialized();
                 return allUpstreamUpstreamEndpoints;
             }
@@ -213,13 +213,13 @@ public class TopicRouter implements Router {
 
             @NonNull
             @Override
-            public List<UpstreamEndpoint> upstreamServiceEndpoints(@NonNull ApiKeys apiKey) {
-                return allUpstreamServiceEndpoints();
+            public List<UpstreamEndpoint> upstreamEndpoints(@NonNull ApiKeys apiKey) {
+                return allUpstreamEndpoints();
             }
 
             @NonNull
             @Override
-            public List<UpstreamEndpoint> allUpstreamServiceEndpoints() {
+            public List<UpstreamEndpoint> allUpstreamEndpoints() {
                 return virtualCluster.targetClusters().stream()
                         .map(t -> new UpstreamEndpoint(t.bootstrapServer().host(), t.bootstrapServer().port(), t, null))
                         .toList();

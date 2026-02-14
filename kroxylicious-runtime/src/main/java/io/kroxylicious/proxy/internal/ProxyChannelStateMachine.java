@@ -140,7 +140,7 @@ public class ProxyChannelStateMachine {
     private final Map<UpstreamEndpoint, BackendStateMachine> backends = new ConcurrentHashMap<>();
 
     // Target clusters by cluster ID
-    private final Map<String, UpstreamEndpoint> serviceEndpoints = new ConcurrentHashMap<>();
+    private final Map<String, UpstreamEndpoint> upstreamEndpoints = new ConcurrentHashMap<>();
 
     // Correlation counter for aggregating responses
     private final Map<Integer, ResponseAggregationContext<ApiMessage>> aggregationCorrelationManager = new ConcurrentHashMap<>();
@@ -389,13 +389,13 @@ public class ProxyChannelStateMachine {
      *
      * @param upstreamEndpoint service endpoint for this cluster
      */
-    void addServiceEndpoint(UpstreamEndpoint upstreamEndpoint) {
+    void addUpstreamEndpoint(UpstreamEndpoint upstreamEndpoint) {
         LOGGER.info("{}: Adding service endpoint {}", sessionId, upstreamEndpoint);
         if (backends.containsKey(upstreamEndpoint)) {
             throw new IllegalArgumentException("Cluster already registered: " + upstreamEndpoint.getHostPort());
         }
 
-        if (serviceEndpoints.containsKey(upstreamEndpoint.targetCluster().name())) {
+        if (upstreamEndpoints.containsKey(upstreamEndpoint.targetCluster().name())) {
             // throw exception that only one service endpoint per cluster is allowed
             throw new IllegalArgumentException("Only one service endpoint per cluster is allowed: " + upstreamEndpoint.getHostPort());
         }
@@ -415,7 +415,7 @@ public class ProxyChannelStateMachine {
                 backpressureTimer);
 
         backends.put(upstreamEndpoint, backend);
-        serviceEndpoints.put(upstreamEndpoint.targetCluster().name(), upstreamEndpoint);
+        upstreamEndpoints.put(upstreamEndpoint.targetCluster().name(), upstreamEndpoint);
     }
 
     // ==================== Accessors ====================
@@ -425,7 +425,7 @@ public class ProxyChannelStateMachine {
     }
 
     public Set<String> clusterIds() {
-        return serviceEndpoints.keySet();
+        return upstreamEndpoints.keySet();
     }
 
     @SuppressWarnings("java:S5738")
@@ -443,7 +443,7 @@ public class ProxyChannelStateMachine {
     private void toConnecting(Channel inboundChannel, ProxyChannelState.Connecting connecting) {
         setState(connecting);
         Objects.requireNonNull(frontendHandler).inConnecting();
-        connecting.upstreamEndpoints().forEach(this::addServiceEndpoint);
+        connecting.upstreamEndpoints().forEach(this::addUpstreamEndpoint);
 
         // Connect all concurrently
         Objects.requireNonNull(inboundChannel);
@@ -480,7 +480,7 @@ public class ProxyChannelStateMachine {
 
     @Nullable
     public BackendStateMachine getBackend(String clusterId) {
-        UpstreamEndpoint upstreamEndpoint = serviceEndpoints.get(clusterId);
+        UpstreamEndpoint upstreamEndpoint = upstreamEndpoints.get(clusterId);
         return getBackend(upstreamEndpoint);
     }
 
@@ -544,7 +544,7 @@ public class ProxyChannelStateMachine {
     public void forwardToUpstreams(Object msg) {
         List<UpstreamEndpoint> msgTargets;
         if (msg instanceof Frame frame) {
-            msgTargets = binding.upstreamServiceEndpoints(ApiKeys.forId(frame.apiKeyId()));
+            msgTargets = binding.upstreamEndpoints(ApiKeys.forId(frame.apiKeyId()));
             if (!aggregationCorrelationManager.containsKey(frame.correlationId())) {
                 aggregationCorrelationManager.put(frame.correlationId(), new ResponseAggregationContext<>(msgTargets.size(), this.reconciler));
             }
