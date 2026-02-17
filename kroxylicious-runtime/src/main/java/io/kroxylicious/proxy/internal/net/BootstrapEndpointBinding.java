@@ -6,5 +6,4 @@
 
 package io.kroxylicious.proxy.internal.net;
 
-public interface BootstrapEndpointBinding extends EndpointBinding {
-}
+public interface BootstrapEndpointBinding extends EndpointBinding { }
