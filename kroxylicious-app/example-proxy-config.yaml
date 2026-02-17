@@ -10,12 +10,23 @@ management:
     prometheus: {}
 virtualClusters:
   - name: demo
-    targetCluster:
-      bootstrapServers: localhost:9092
+    targetClusters:
+      - name: t1
+        bootstrapServers: localhost:9092
+      - name: t2
+        bootstrapServers: localhost:39092
     gateways:
     - name: mygateway
+      router:
       portIdentifiesNode:
         bootstrapAddress: localhost:9192
+        nodeIdRanges:
+          - name: default
+            start: 1
+            end: 1
+          - name: cluster2
+            start: 10001
+            end: 10001
     logNetwork: false
     logFrames: false
 filterDefinitions:

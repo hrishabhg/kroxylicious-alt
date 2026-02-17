@@ -9,7 +9,7 @@ package io.kroxylicious.proxy.internal.net;
 import java.util.Map;
 import java.util.concurrent.CompletionStage;
 
-import io.kroxylicious.proxy.service.HostPort;
+import io.kroxylicious.proxy.service.UpstreamEndpoint;
 
 public interface EndpointReconciler {
 
@@ -18,9 +18,9 @@ public interface EndpointReconciler {
      * current set of nodes for this virtual cluster.  Once any necessary alterations to the
      * endpoint bindings have been realised, the returned CompletionStage will be completed.
      *
-     * @param virtualClusterModel virtual cluster
-     * @param upstreamNodes  current set of node ids
+     * @param endpointGateway virtual cluster
+     * @param upstreamNodeMap  virtual Id -> UpstreamEndpoint map. Binding carries more rules.
      * @return CompletionStage that is used to signal completion of the work.
      */
-    CompletionStage<Void> reconcile(EndpointGateway virtualClusterModel, Map<Integer, HostPort> upstreamNodes);
+    CompletionStage<Void> reconcile(EndpointGateway endpointGateway, Map<Integer, UpstreamEndpoint> upstreamNodeMap);
 }

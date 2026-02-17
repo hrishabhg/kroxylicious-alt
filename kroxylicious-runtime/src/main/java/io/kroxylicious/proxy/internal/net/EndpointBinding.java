@@ -6,7 +6,11 @@
 
 package io.kroxylicious.proxy.internal.net;
 
-import io.kroxylicious.proxy.service.HostPort;
+import java.util.List;
+
+import org.apache.kafka.common.protocol.ApiKeys;
+
+import io.kroxylicious.proxy.service.UpstreamEndpoint;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -21,12 +25,14 @@ public interface EndpointBinding {
      */
     EndpointGateway endpointGateway();
 
+    List<UpstreamEndpoint> upstreamEndpoints(ApiKeys apiKey); // target specific to the filter context
+
     /**
-     * The upstream target of this binding.
+     * All upstream service endpoints for this binding. Connection manager will initialise connections to all of these.
      *
-     * @return upstream target.
+     * @return all upstream service endpoints.
      */
-    HostPort upstreamTarget();
+    List<UpstreamEndpoint> allUpstreamEndpoints(); // all targets
 
     /**
      * If set true, the upstream target must only be used for metadata discovery.
@@ -37,11 +43,6 @@ public interface EndpointBinding {
         return false;
     }
 
-    /**
-     * Returns the broker node id associated with this endpoint.  If the endpoint
-     * is being used for bootstrapping, null will be returned instead.
-     * @return node id or null.
-     */
     @Nullable
-    Integer nodeId();
+    Integer virtualNodeId();
 }
